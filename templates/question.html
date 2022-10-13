@@ -3,15 +3,20 @@
 
   <h1>{{ question.question }}</h1>
 
-  <form action="/answer" method="POST">
+  <form action="/answer" method="POST" >
 
+      <input name = "id" value = "{{ id }}" type = 'hidden'>
       <!-- you should have one item like this for every choice -->
       <p>
+
+        {% for choice in question.choices%}
         <input
             type="radio"
             name="answer"
-            value="value-goes-here">
-        choice-goes-here
+            value="{{ choice }}">
+            {{ choice }}
+            {% endfor %}
+
       </p>
 
     <button>Continue</button>

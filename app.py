@@ -24,19 +24,33 @@ def show_start_page():
 def start_survey():
     """ """
 
-    return render_template("question.html",
-        question=survey.questions[0])
+    return redirect('/question/0')
 
 
-
-@app.get("/question/<question_id>")
+@app.get("/question/<int:question_id>")
 def generate_question(question_id):
     """ """
 
+
     return render_template("question.html",
-        question=survey.questions[question_id])
+        question = survey.questions[question_id],  id = question_id)
 
 
 @app.post("/answer")
 def answer_question():
-    """ """
+    """  """
+    answer = request.form['answer']
+    question_id = int(request.form['id'])
+
+    responses.append(answer)
+
+    return redirect(f'/question/{question_id+1}')
+
+
+
+
+
+
+
+
+
