@@ -15,6 +15,8 @@ responses = []
 def show_start_page():
     """ Returns html of survey start page """
 
+    session['responses'] = []
+
     return render_template("survey_start.html",
         title=survey.title,
         instructions=survey.instructions)
@@ -25,44 +27,67 @@ def show_start_page():
 def start_survey():
     """ Redirects user to first question in survey """
 
+
     return redirect('/question/0')
 
 
 @app.get("/question/<int:question_id>")
 def generate_question(question_id):
     """ Returns html for each question """
+    # breakpoint()
 
-    return render_template("question.html",
-        question = survey.questions[question_id],  id = question_id)
+    questions = survey.questions
+
+    current_question_id = len(session['responses'])
+
+
+    question = questions[question_id] if \
+        (question_id == current_question_id) \
+        else None
+
+    # if trying to access invalid question
+    if not question:
+        flash('Accessing an invalid question!')
+
+        return redirect(f'/question/{current_question_id}')
+
+
+    return render_template(
+        "question.html",
+        question = question)
 
 
 
 @app.post("/answer")
 def answer_question():
-    """ Redirects user to next question (or completion page), appends responses list """
+    """ Redirects user to next question (or completion page),
+     appends responses list """
 
     answer = request.form['answer']
-    question_id = int(request.form['id'])
 
-    responses.append(answer)
+    # cookie session storage
+    responses = session['responses']
+    responses.append(f'{answer}')
+    session['responses'] = responses
 
-    if question_id == len(survey.questions) - 1:
+    next_question_id = len(responses)
+
+    if next_question_id == len(survey.questions):
         return redirect("/completion")
 
-    return redirect(f'/question/{question_id+1}')
-
-
+    return redirect(
+        f"/question/{next_question_id}")
 
 @app.get("/completion")
 def complete_survey():
     """ Returns html of completion page with questions/responses """
 
-    return render_template("completion.html",
+    responses = session['responses']
+
+    return render_template(
+        "completion.html",
         questions=survey.questions,
         responses=responses)
-
-
-
 
 
 

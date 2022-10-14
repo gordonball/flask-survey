@@ -1,25 +1,25 @@
 {% extends 'base.html' %}
 {% block content %}
 
-  <h1>{{ question.question }}</h1>
+<h1>{{ question.question }}</h1>
 
-  <form action="/answer" method="POST" >
+<form action="/answer" method="POST">
 
-      <input name = "id" value = "{{ id }}" type = 'hidden'>
-      <!-- you should have one item like this for every choice -->
-      <p>
 
-        {% for choice in question.choices%}
-        <input
-            type="radio"
-            name="answer"
-            value="{{ choice }}">
-            {{ choice }}
-            {% endfor %}
+  {% for msg in get_flashed_messages() %}
+  <p><b>{{ msg }}</b></p>
+{% endfor %}
+  <!-- you should have one item like this for every choice -->
+  <p>
 
-      </p>
+    {% for choice in question.choices%}
+    <input type="radio" name="answer" value="{{ choice }}">
+    {{ choice }}
+    {% endfor %}
 
-    <button>Continue</button>
-  </form>
+  </p>
+
+  <button>Continue</button>
+</form>
 
 {% endblock %}
